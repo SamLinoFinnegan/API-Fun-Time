@@ -1,76 +1,99 @@
-container = document.querySelector(".container");
-main = document.querySelector(".mainDiv");
-btns = document.querySelector("#btnsDiv");
-firstButton = document.getElementById('firstBtn')
+const main = document.querySelector(".mainDiv");
+const btns = document.querySelector("#btnsContainer");
+const firstButton = document.getElementById('firstBtn');
+const secondButton = document.getElementById('secondBtn');
+const FAV_API_URL = "https://www.anapioficeandfire.com/api/characters/"
+const API_URL = "https://thronesapi.com/api/v2/Characters/";
 
-//----------------------------------------------------------------------------------------------------------------//   
+const characters = [
+    { id: 1303, name: "Daenerys", img: "https://i.pinimg.com/564x/72/8f/50/728f503ebc7564da375aa5bd8fa7a2d7.jpg" },
+    { id: 148, name: "Arya", img: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/game-of-thrones-arya-1558383066.jpg?crop=0.495xw:1.00xh;0.347xw,0&resize=480:*" },
+    { id: 1442, name: "The Mountain", img: "https://i.pinimg.com/originals/2f/de/72/2fde72e09bf7c9c8e560b2c7f9df62bb.jpg" },
+    { id: 1532, name: "Jaqen H'ghar", img: "https://i.pinimg.com/originals/8d/63/00/8d63002189c2f09e0fda2ebc8221ca94.jpg" },
+    { id: 1770, name: "Oberyn", img: "https://i.pinimg.com/originals/8e/fe/93/8efe93a781d2742f206dec7d10fa8fab.jpg" },
+];
 
-const pickCharacter = async () => {
-    main.innerHTML = ""
-    btns.innerHTML = ""
-    btns.appendChild(document.createElement('li')).innerHTML = `
-    <div class="btnImg">
-        <img src="https://lh3.googleusercontent.com/UO7AqyWvGig7mrkXs6g_iPEg7D4qfkHyS72V21U2syLmPHhb5uocAW_zKSZLIPjeB1DZoYpn_MhvzNPdkUPZSTw2=w128-h128-e365-rj-sc0x00ffffff">
-        <img src="https://assets.change.org/photos/9/fi/gw/rAfiGwnmwjoxWrn-128x128-noPad.jpg?1558421245">
-        <img src="https://pm1.narvii.com/6791/280513ef50c9e54e26e455adcfd55fe174730e65v2_128.jpg">
-        <img src="https://lh3.googleusercontent.com/0UKchaHucuV8A84NNHZWBsyY5iHTEsDbXUuCsDPFoAPF1hmyfTgeue2tPmxU4jClvcHv4f34e_ywj9NwZdfIK3pnksc=w128-h128-e365-rj-sc0x00ffffff">
-        <img src="https://pm1.narvii.com/6794/22bdf901764dc4794da532e71f690302dc7c7ec4v2_128.jpg">
-    </div>
-    <div id="btns" class="btn">
-            <button class="button" id="1303"
-                value="https://i.pinimg.com/564x/72/8f/50/728f503ebc7564da375aa5bd8fa7a2d7.jpg">
-                Daenerys
-                </button>
-            <button class="button" id="148" value="https://i.dlpng.com/static/png/6774803_preview.png">
-                Arya
-                </button>
-            <button class="button" id="1442"
-                value="https://i.pinimg.com/originals/2f/de/72/2fde72e09bf7c9c8e560b2c7f9df62bb.jpg">
-                The Mountain
-                </button>
-            <button class="button" id="1532"
-                value="https://i.pinimg.com/originals/8d/63/00/8d63002189c2f09e0fda2ebc8221ca94.jpg">
-                Jaqen H-gar
-                </button>
-            <button class="button" id="1770" value="https://i.imgur.com/sWfwAOx.png">
-                Oberyn
-                </button>
-        </div>
-`;
-    const buttons = Array.from(document.getElementsByClassName("button"));
-    buttons.forEach(button => {
-        button.addEventListener('click', event => {
-            const character = event.target.id;
-            const img = event.target.value;
-            getCharacter(character)
-                .then((data) => addCharacterToDom(data, img));
+const getCharacter = async (api, id) => {
+    try {
+        const response = await fetch(`${api}${id}`);
+        const data = await response.json();
+        
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
 
-        });
+const addCharacterToDom = (character) => {
+    main.innerHTML = "";
+    btns.innerHTML = "";
+    const { name, gender, culture, born, titles, tvSeries, playedBy } = character;
+    const newImg = document.createElement("img");
+    const newImgCont = document.createElement("div");
+
+    newImg.src = characters.find(c => c.id == character.url.split("/").slice(-1)).img;
+    newImgCont.appendChild(newImg);
+    main.appendChild(newImgCont);
+    const ul = document.createElement("ul");
+    ul.className = "myUl";
+    ul.innerHTML = `
+        <li><h3>Name: ${name}.</h3></li>
+        <li><h3>Gender: ${gender}.</h3></li>
+        <li><h3>Culture: ${culture}.</h3></li>
+        <li><h3>Born: ${born}.</h3></li>
+        <li><h3>Titles: ${titles.slice(1,4).join(", ")}.</h3></li>
+        <li><h3>Appeared in: ${tvSeries}.</h3></li>
+        <li><h3>Was played by: ${playedBy}.</h3></li>
+    `;
+    main.appendChild(ul);
+};
+
+const addRandomCharacterToDom = (character) => {
+    main.innerHTML = "";
+    btns.innerHTML = "";
+    const { family , firstName , id , imageUrl , lastName , title } = character;
+    const newImg = document.createElement("img");
+    const newImgCont = document.createElement("div");
+
+    newImg.src = imageUrl
+    newImgCont.appendChild(newImg);
+    main.appendChild(newImgCont)
+    const ul = document.createElement("ul");
+    ul.className = "myUl";
+    ul.innerHTML = `
+        <li><h3>Name: ${firstName}.</h3></li>
+        <li><h3>Family: ${family}.</h3></li>
+        <li><h3>Last Name: ${lastName}.</h3></li>
+        <li><h3>Titles: ${title}.</h3></li>
+    `;
+    main.appendChild(ul);
+};
+
+const pickRandomCharacter = () => {
+    let id  = Math.floor(Math.random() * 52) 
+    getCharacter(API_URL,id).then(addRandomCharacterToDom);
+};
+
+const pickCharacter = () => {
+    main.innerHTML = "";
+    btns.innerHTML = "";
+    characters.forEach(({ id, name, img }) => {
+        const button = document.createElement("button");
+        const imgDiv = document.createElement("div");
+        const image = document.createElement("img");
+        const btnDiv = document.createElement("div");
+        imgDiv.appendChild(image)
+        btnDiv.appendChild(imgDiv)
+        btnDiv.appendChild(button)
+        image.src = img
+        btnDiv.className = "btnDiv"
+        button.className = "btn";
+        button.id = id;
+        button.value = img;
+        button.innerText = name;
+        button.addEventListener("click", () => getCharacter(FAV_API_URL,id).then(addCharacterToDom));
+        btns.appendChild(btnDiv);
     });
 };
-
-
-//----------------------------------------------------------------------------------------------------------------//   
-const addCharacterToDom = async (arr, img) => {
-    main.innerHTML = ""
-    btns.innerHTML = ""
-    const newImg = document.createElement('img')
-    newImg.src = img;
-    main.appendChild(newImg);
-    main.appendChild(document.createElement('li')).innerHTML = `
-        <ul class="myUl">
-            <li><h3> Name: ${arr.name}.</h3></li>
-            <li><h3> Gender: ${arr.gender}.</h3></li>
-            <li><h3> Culture: ${arr.culture}.</h3></li>
-            <li><h3> Born: ${arr.born}.</h3></li>
-            <li><h3> Titles: ${arr.titles[1]} , ${arr.titles[2]} , ${arr.titles[3]}.</h3></li>
-            <li><h3> Appeared in: ${arr.tvSeries}.</h3></li>
-            <li><h3> Was played by: ${arr.playedBy}.</h3></li>
-        </ul>`;
-
-};
-
-
-//--------------------------------------------//  
-firstButton.addEventListener('click', pickCharacter);
-
+firstButton.addEventListener("click", pickCharacter);
+secondButton.addEventListener("click", pickRandomCharacter);
